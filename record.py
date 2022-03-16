@@ -36,6 +36,9 @@ class Record:
             self.sum = self.sum + a - earliest_value
             return earliest_value
 
+    def get_array(self):
+        return np.concatenate((self.array[self.start_pointer:], self.array[:self.end_pointer]), axis=0)
+
 
 if __name__ == '__main__':
     record = Record(10)
@@ -44,5 +47,4 @@ if __name__ == '__main__':
     print(record.array)
     for i in range(10, 20):
         record.append(i)
-        print(record.array)
-        print(record.get_sum())
+        print(record.get_array())
