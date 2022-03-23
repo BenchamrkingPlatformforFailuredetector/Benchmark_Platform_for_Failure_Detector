@@ -21,6 +21,12 @@ class Record:
     def get_sum(self):
         return self.sum
 
+    def get_length(self):
+        return self.current_length
+
+    def get_latest_one(self):
+        return self.array[self.end_pointer - 1]
+
     def append(self, a):
         if self.current_length < self.max_length:
             self.array[self.end_pointer] = a
@@ -48,6 +54,8 @@ if __name__ == '__main__':
     for i in range(10):
         record.append(i)
         print(record.get_array())
+        print(record.get_sum())
     for i in range(10, 20):
         record.append(i)
         print(record.get_array())
+        print(record.get_sum())
