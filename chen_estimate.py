@@ -16,10 +16,7 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
         if arrival_time > next_expected_arrival_time:
             mistake_duration += arrival_time - next_expected_arrival_time
 
-        if current_length < n:
-            next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
-        else:
-            next_expected_arrival_time = alpha + current_sum / n + ((n + 1) / 2) * delta_i
+        next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
 
     return mistake_duration
 
