@@ -76,7 +76,7 @@ def chen_estimate(enviornment, delta_i, n_list, alpha_list):
         mistake_duration = chen_estimate_for_n_array(enviornment, delta_i, n_list, alpha_list)
         return mistake_duration
     else:
-        mistake_duration = chen_estimate_for_single_value(enviornment, delta_i, n_list, alpha)
+        mistake_duration = chen_estimate_for_single_value(enviornment, delta_i, n_list, alpha_list)
         return mistake_duration
 
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     # alpha_list = np.array([i for i in range(10001)], dtype=float)
     alpha_list = 10000
 
-    mistake_duration = chen_estimate(arrival_time_array, delta_i, n_list, alpha_list)
+    mistake_duration = chen_estimate(arrival_time_array, delta_i, n_list, alpha_list) / 1000000000
 
     # print(mistake_duration)
 

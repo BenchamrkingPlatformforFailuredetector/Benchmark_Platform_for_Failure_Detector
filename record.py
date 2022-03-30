@@ -17,6 +17,9 @@ class Record:
         self.array = np.zeros(n, dtype=float)
         self.start_pointer = 0
         self.end_pointer = 0
+        self.difference = np.array([float('-inf') for i in range(n-1)])
+        self.start_pointer_difference = 0
+        self.end_pointer_difference = 0
 
     def get_sum(self):
         return self.sum
@@ -33,6 +36,11 @@ class Record:
             self.end_pointer = (self.end_pointer + 1) % self.max_length
             self.current_length += 1
             self.sum += a
+            if self.current_length > 1:
+                origin = self.array[(self.end_pointer - 2) % self.max_length]
+                difference = a - origin
+                self.difference[self.end_pointer_difference] = difference
+                self.end_pointer_difference = (self.end_pointer_difference + 1) % (self.max_length - 1)
 
         else:
             earliest_value = self.array[self.start_pointer]
@@ -40,6 +48,12 @@ class Record:
             self.start_pointer = (self.start_pointer + 1) % self.max_length
             self.end_pointer = (self.end_pointer + 1) % self.max_length
             self.sum = self.sum + a - earliest_value
+            if self.current_length > 1:
+                origin = self.array[(self.end_pointer - 2) % self.max_length]
+                difference = a - origin
+                self.difference[self.start_pointer_difference] = difference
+                self.end_pointer_difference = (self.end_pointer_difference + 1) % (self.max_length - 1)
+                self.start_pointer_difference = (self.start_pointer_difference + 1) % (self.max_length - 1)
             return earliest_value
 
     def get_array(self):
@@ -48,14 +62,14 @@ class Record:
         else:
             return np.concatenate((self.array[self.start_pointer:], self.array[:self.end_pointer]), axis=0)
 
+    def get_difference(self):
+        difference = self.difference[self.difference >= 0]
+        return difference
+
 
 if __name__ == '__main__':
-    record = Record(10)
-    for i in range(10):
+    record = Record(5)
+    l = [5,8,10,15,21,30, 33, 40, 50, 61]
+    for i in l:
         record.append(i)
-        print(record.get_array())
-        print(record.get_sum())
-    for i in range(10, 20):
-        record.append(i)
-        print(record.get_array())
-        print(record.get_sum())
+        print(record.get_difference())
