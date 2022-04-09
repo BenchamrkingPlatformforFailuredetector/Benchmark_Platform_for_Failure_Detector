@@ -6,29 +6,34 @@ import scipy.stats as st
 
 def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
     mistake_duration = 0
-    expected_arrival_time = enviornment[0]
+    next_expected_arrival_time = enviornment[0]
     record = Record(n)
+    wrong_count = 0
 
     for arrival_time in enviornment:
         record.append(arrival_time)
         difference = record.get_difference()
 
-        if arrival_time > expected_arrival_time:
-            mistake_duration += arrival_time - expected_arrival_time
+        if arrival_time > next_expected_arrival_time:
+            mistake_duration += arrival_time - next_expected_arrival_time
+            wrong_count += 1
 
         # Then start to calculate the expected arrival time
         if len(difference) == 0:
             # Means there are only one arrival time in the record
-            expected_arrival_time = arrival_time + delta_i
+            next_expected_arrival_time = arrival_time + delta_i
         elif len(difference) == 1:
             # Means there are only two arrival time in the record
-            expected_arrival_time = arrival_time + difference[0]
+            next_expected_arrival_time = arrival_time + difference[0]
         else:
             mean = np.mean(difference)
             scale = np.std(difference)
             expected_interval = st.norm.ppf(1 - np.power(0.1, phi), loc=mean, scale=scale)
-            expected_arrival_time = arrival_time + expected_interval
-    return mistake_duration
+            next_expected_arrival_time = arrival_time + expected_interval
+
+    detection_time = next_expected_arrival_time - enviornment[-1]
+    pa = (len(enviornment) - wrong_count) / len(enviornment)
+    return mistake_duration, detection_time, pa
 
 def accural_estimate_for_phi_array(enviornment, delta_i, n, phi_array):
     length = len(phi_array)
@@ -114,17 +119,19 @@ if __name__ == '__main__':
 
     delta_i = 100000000.0
     # n = 1000
-    n = np.array([2, 10, 100, 1000, 10000])
+    n = 1000
     phi = 1
     # phi = np.array([i for i in range(1000)])
     # phi = phi / 100
 
-    mistake_duration = accural_estimate(arrival_time_array, delta_i, n, phi) / 1000000000
+    mistake_duration, detection_time, pa = accural_estimate(arrival_time_array, delta_i, n, phi)
 
-    # print(mistake_duration)
+    print(f"{mistake_duration:e}")
+    print(f"{detection_time:e}")
+    print(f"{pa:%}")
 
-    plt.plot(n, mistake_duration)
-    plt.show()
+    # plt.plot(n, mistake_duration)
+    # plt.show()
 
 
 

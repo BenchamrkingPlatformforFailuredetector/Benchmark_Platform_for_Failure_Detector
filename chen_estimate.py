@@ -2,12 +2,15 @@ import pandas as pd
 import numpy as np
 from record import Record
 import matplotlib.pyplot as plt
+import os
+import psutil
 
 
 def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
     mistake_duration = 0
     next_expected_arrival_time = float('inf')
     record = Record(n)
+    wrong_count = 0
     for arrival_time in enviornment:
         record.append(arrival_time)
         current_length = record.get_length()
@@ -15,10 +18,15 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
 
         if arrival_time > next_expected_arrival_time:
             mistake_duration += arrival_time - next_expected_arrival_time
+            wrong_count += 1
+
 
         next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
 
-    return mistake_duration
+    detection_time = next_expected_arrival_time - enviornment[-1]
+    pa = (len(enviornment) - wrong_count) / len(enviornment)
+
+    return mistake_duration, detection_time, pa
 
 
 def chen_estimate_for_alpha_array(enviornment, delta_i, n, alpha_list):
@@ -85,15 +93,23 @@ if __name__ == '__main__':
     df = df[df.site == 8]
     arrival_time_array = np.array(df.timestamp_receive)
 
+    # pid = os.getpid()
+    # p = psutil.Process(pid)
+    # print(p.name())
+    # print(p.exe())
+    # print(p.cpu_times())
+    # print(p.memory_info())
     delta_i = 100000000.0
-    n_list = np.array([i for i in range(1, 1001)])
-    # n_list = 1000
-    # alpha_list = np.array([i for i in range(10001)], dtype=float)
+    # # n_list = np.array([i for i in range(1, 101)])
+    n_list = 1000
+    # alpha_list = np.array([0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000], dtype=float)
     alpha_list = 10000
-
-    mistake_duration = chen_estimate(arrival_time_array, delta_i, n_list, alpha_list) / 1000000000
-
-    # print(mistake_duration)
-
-    plt.plot(n_list, mistake_duration)
-    plt.show()
+    #
+    mistake_duration, detection_time, pa = chen_estimate(arrival_time_array, delta_i, n_list, alpha_list)
+    #
+    print(f"{mistake_duration:e}")
+    print(f"{detection_time:e}")
+    print(f"{pa:.2%}")
+    #
+    # plt.plot(alpha_list, mistake_duration)
+    # plt.show()

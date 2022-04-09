@@ -5,26 +5,31 @@ import matplotlib.pyplot as plt
 
 def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi):
     mistake_duration = 0
-    expected_arrival_time = enviornment[0]
+    next_expected_arrival_time = enviornment[0]
     record = Record(n)
+    wrong_count = 0
     for arrival_time in enviornment:
         record.append(arrival_time)
         current_length = record.get_length()
         current_sum = record.get_sum()
 
-        if arrival_time > expected_arrival_time:
-            mistake_duration += arrival_time - expected_arrival_time
+        if arrival_time > next_expected_arrival_time:
+            mistake_duration += arrival_time - next_expected_arrival_time
+            wrong_count += 1
 
         # calculating the value of alpha
-        error = arrival_time - expected_arrival_time - delay
+        error = arrival_time - next_expected_arrival_time - delay
         delay = delay + gamma * error
         var = var + gamma * (np.abs(error) - var)
         alpha = beta * delay + phi * var
 
         # calculating the next expected arrival time
-        expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
+        next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
 
-    return mistake_duration
+    detection_time = next_expected_arrival_time - enviornment[-1]
+    pa = (len(enviornment) - wrong_count) / len(enviornment)
+
+    return mistake_duration, detection_time, pa
 
 
 def olivier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, gamma, beta, phi):
@@ -126,8 +131,7 @@ if __name__ == '__main__':
     arrival_time_array = np.array(df.timestamp_receive)
 
     delta_i = 100000000.0
-    n = np.array([i for i in range(1, 1001)])
-    # n = 1000
+    n = 1000
     # alpha_list = np.array([i for i in range(10001)], dtype=float)
     # alpha_list = 10000
     # gamma = np.array([i / 10 for i in range(10)], dtype=np.float64)
@@ -137,9 +141,11 @@ if __name__ == '__main__':
     delay = 0
     var = 0
 
-    mistake_duration = olivier_estimate(arrival_time_array, delta_i, n, delay, var, gamma) / 1000000000
+    mistake_duration, detection_time, pa = olivier_estimate(arrival_time_array, delta_i, n, delay, var, gamma)
     #
-    # print(mistake_duration)
+    print(f"{mistake_duration:e}")
+    print(f"{detection_time:e}")
+    print(f"{pa:.2%}")
     #
-    plt.plot(n, mistake_duration)
-    plt.show()
+    # plt.plot(n, mistake_duration)
+    # plt.show()
