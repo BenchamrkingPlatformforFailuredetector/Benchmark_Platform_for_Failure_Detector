@@ -3,8 +3,14 @@ import numpy as np
 from record import Record
 import matplotlib.pyplot as plt
 import scipy.stats as st
+import os
+import psutil
+import time
+import multiprocessing
 
-def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
+def accural_estimate_for_single_value(enviornment, delta_i, n, phi, q):
+    pid = os.getpid()
+
     mistake_duration = 0
     next_expected_arrival_time = enviornment[0]
     record = Record(n)
@@ -33,7 +39,10 @@ def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
 
     detection_time = next_expected_arrival_time - enviornment[-1]
     pa = (len(enviornment) - wrong_count) / len(enviornment)
-    return mistake_duration, detection_time, pa
+    cpu_time = psutil.Process(pid).cpu_times().system
+    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024 / 1024
+
+    q.put((mistake_duration, detection_time, pa, cpu_time, memory))
 
 def accural_estimate_for_phi_array(enviornment, delta_i, n, phi_array):
     length = len(phi_array)
@@ -124,11 +133,18 @@ if __name__ == '__main__':
     # phi = np.array([i for i in range(1000)])
     # phi = phi / 100
 
-    mistake_duration, detection_time, pa = accural_estimate(arrival_time_array, delta_i, n, phi)
+    q = multiprocessing.Queue()
+    p = multiprocessing.Process(target=accural_estimate_for_single_value, args=(arrival_time_array, delta_i, n, phi, q))
+    p.start()
+    p.join()
+
+    mistake_duration, detection_time, pa, cpu_time, memory = q.get()
 
     print(f"{mistake_duration:e}")
     print(f"{detection_time:e}")
-    print(f"{pa:%}")
+    print(f"{pa:.2%}")
+    print(cpu_time)
+    print(f"{memory:.2f} GB")
 
     # plt.plot(n, mistake_duration)
     # plt.show()

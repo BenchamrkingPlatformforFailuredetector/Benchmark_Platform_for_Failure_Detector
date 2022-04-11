@@ -4,9 +4,13 @@ from record import Record
 import matplotlib.pyplot as plt
 import os
 import psutil
+import time
+import multiprocessing
 
 
-def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
+def chen_estimate_for_single_value(enviornment, delta_i, n, alpha, q):
+    pid = os.getpid()
+
     mistake_duration = 0
     next_expected_arrival_time = float('inf')
     record = Record(n)
@@ -25,8 +29,10 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
 
     detection_time = next_expected_arrival_time - enviornment[-1]
     pa = (len(enviornment) - wrong_count) / len(enviornment)
+    cpu_time = psutil.Process(pid).cpu_times().system
+    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024 / 1024
 
-    return mistake_duration, detection_time, pa
+    q.put((mistake_duration, detection_time, pa, cpu_time, memory))
 
 
 def chen_estimate_for_alpha_array(enviornment, delta_i, n, alpha_list):
@@ -89,27 +95,29 @@ def chen_estimate(enviornment, delta_i, n_list, alpha_list):
 
 
 if __name__ == '__main__':
+
     df = pd.read_csv(r'.\data\Node0\trace.csv')
     df = df[df.site == 8]
     arrival_time_array = np.array(df.timestamp_receive)
 
-    # pid = os.getpid()
-    # p = psutil.Process(pid)
-    # print(p.name())
-    # print(p.exe())
-    # print(p.cpu_times())
-    # print(p.memory_info())
     delta_i = 100000000.0
     # # n_list = np.array([i for i in range(1, 101)])
-    n_list = 1000
+    n = 1000
     # alpha_list = np.array([0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000], dtype=float)
-    alpha_list = 10000
-    #
-    mistake_duration, detection_time, pa = chen_estimate(arrival_time_array, delta_i, n_list, alpha_list)
-    #
+    alpha = 10000
+
+    q = multiprocessing.Queue()
+    p = multiprocessing.Process(target=chen_estimate_for_single_value, args=(arrival_time_array, delta_i, n, alpha, q))
+    p.start()
+    p.join()
+
+    mistake_duration, detection_time, pa, cpu_time, memory = q.get()
+
     print(f"{mistake_duration:e}")
     print(f"{detection_time:e}")
     print(f"{pa:.2%}")
+    print(cpu_time)
+    print(f"{memory:.2f} GB")
     #
     # plt.plot(alpha_list, mistake_duration)
     # plt.show()
