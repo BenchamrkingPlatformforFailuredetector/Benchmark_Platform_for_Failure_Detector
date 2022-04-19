@@ -35,7 +35,7 @@ def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma
     detection_time = next_expected_arrival_time - enviornment[-1]
     pa = (len(enviornment) - wrong_count) / len(enviornment)
     cpu_time = psutil.Process(pid).cpu_times().system
-    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024 / 1024
+    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024
 
     q.put((mistake_duration, detection_time, pa, cpu_time, memory))
 
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     # gamma = np.array([i / 10 for i in range(10)], dtype=np.float64)
     # gamma = np.array([i for i in range(4000)])
     # gamma = gamma / 10000
-    gamma = 0.1
+    gamma = 0.01
     delay = 0
     var = 0
     beta = 1
@@ -159,11 +159,11 @@ if __name__ == '__main__':
 
     mistake_duration, detection_time, pa, cpu_time, memory = q.get()
 
-    print(f"{mistake_duration:e}")
-    print(f"{detection_time:e}")
+    print(f"{mistake_duration / 1000000:.2f} ms")
+    print(f"{detection_time / 1000000:.2f} ms")
     print(f"{pa:.2%}")
-    print(cpu_time)
-    print(f"{memory:.2f} GB")
+    print(f"{cpu_time:.2f} s")
+    print(f"{memory:.2f} MB")
     #
     # plt.plot(n, mistake_duration)
     # plt.show()

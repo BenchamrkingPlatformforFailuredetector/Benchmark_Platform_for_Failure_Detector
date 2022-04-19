@@ -6,9 +6,10 @@ import os
 import psutil
 import time
 import multiprocessing
+import copy
 
 
-def chen_estimate_for_single_value(enviornment, delta_i, n, alpha, q):
+def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
     pid = os.getpid()
 
     mistake_duration = 0
@@ -28,11 +29,14 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha, q):
         next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
 
     detection_time = next_expected_arrival_time - enviornment[-1]
+    if detection_time < 0:
+        detection_time = 0
     pa = (len(enviornment) - wrong_count) / len(enviornment)
     cpu_time = psutil.Process(pid).cpu_times().system
-    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024 / 1024
+    memory = psutil.Process(pid).memory_info().rss / 1024 / 1024
 
-    q.put((mistake_duration, detection_time, pa, cpu_time, memory))
+    # q.put((mistake_duration, detection_time, pa, cpu_time, memory))
+    return mistake_duration, detection_time, pa, cpu_time, memory
 
 
 def chen_estimate_for_alpha_array(enviornment, delta_i, n, alpha_list):
@@ -95,29 +99,72 @@ def chen_estimate(enviornment, delta_i, n_list, alpha_list):
 
 
 if __name__ == '__main__':
-
-    df = pd.read_csv(r'.\data\Node0\trace.csv')
-    df = df[df.site == 8]
-    arrival_time_array = np.array(df.timestamp_receive)
-
     delta_i = 100000000.0
-    # # n_list = np.array([i for i in range(1, 101)])
     n = 1000
-    # alpha_list = np.array([0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000], dtype=float)
-    alpha = 10000
+    alpha = 100000
+    node_list = [0, 1, 3, 5, 6, 7, 8, 9]
+    pool = multiprocessing.Pool(processes=56)
+    results = []
+    for i in node_list:
+        receive_from_node_list = copy.deepcopy(node_list)
+        receive_from_node_list.remove(i)
+        for j in receive_from_node_list:
+            df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
+            df = df[df.site == j]
+            arrival_time_array = np.array(df.timestamp_receive)
+            results.append(pool.apply_async(chen_estimate_for_single_value, (arrival_time_array, delta_i, n, alpha,)))
 
-    q = multiprocessing.Queue()
-    p = multiprocessing.Process(target=chen_estimate_for_single_value, args=(arrival_time_array, delta_i, n, alpha, q))
-    p.start()
-    p.join()
+    pool.close()
+    pool.join()
+    mistake_duration_list = []
+    detection_time_list = []
+    pa_list = []
+    cpu_time_list = []
+    memory_list = []
+    for res in results:
+        mistake_duration_list.append(res.get()[0] / 1000000)
+        detection_time_list.append(res.get()[1] / 1000000)
+        pa_list.append(res.get()[2])
+        cpu_time_list.append(res.get()[3])
+        memory_list.append(res.get()[4])
 
-    mistake_duration, detection_time, pa, cpu_time, memory = q.get()
+    mistake_duration_array = np.array(mistake_duration_list)
+    detection_time_array = np.array(detection_time_list)
+    pa_array = np.array(pa_list)
+    cpu_time_array = np.array(cpu_time_list)
+    memory_array = np.array(memory_list)
 
-    print(f"{mistake_duration:e}")
-    print(f"{detection_time:e}")
-    print(f"{pa:.2%}")
-    print(cpu_time)
-    print(f"{memory:.2f} GB")
+    print(f"average mistake duration: {np.mean(mistake_duration_array):.2f} ms")
+    print(f"average detection time: {np.mean(detection_time_array):.2f} ms")
+    print(f"average pa: {np.mean(pa_array):.2%}")
+    print(f"average cpu time: {np.mean(cpu_time_array):.2f} s")
+    print(f"average memory: {np.mean(memory_array):.2f} MB")
+    print(f"std mistake duration: {np.std(mistake_duration_array):.2f} ms")
+    print(f"std detection time: {np.std(detection_time_array):.2f} ms")
+    print(f"std pa: {np.std(pa_array):.2%}")
+
+    # df = pd.read_csv(r'.\data\Node0\trace.csv')
+    # df = df[df.site == 8]
+    # arrival_time_array = np.array(df.timestamp_receive)
     #
-    # plt.plot(alpha_list, mistake_duration)
-    # plt.show()
+    # delta_i = 100000000.0
+    # # # n_list = np.array([i for i in range(1, 101)])
+    # n = 1000
+    # # alpha_list = np.array([0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000], dtype=float)
+    # alpha = 10000
+    #
+    # q = multiprocessing.Queue()
+    # p = multiprocessing.Process(target=chen_estimate_for_single_value, args=(arrival_time_array, delta_i, n, alpha, q))
+    # p.start()
+    # p.join()
+    #
+    # mistake_duration, detection_time, pa, cpu_time, memory = q.get()
+    #
+    # print(f"{mistake_duration / 1000000:.2f} ms")
+    # print(f"{detection_time / 1000000:.2f} ms")
+    # print(f"{pa:.2%}")
+    # print(f"{cpu_time:.2f} s")
+    # print(f"{memory:.2f} MB")
+    # #
+    # # plt.plot(alpha_list, mistake_duration)
+    # # plt.show()
