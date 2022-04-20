@@ -43,7 +43,8 @@ def line_chart(scores: pd.DataFrame, metrics=None):
     algorithms = scores.keys()  # ['Accural', 'Chen', 'Olivier']
 
     for a in algorithms:
-        y_data = scores[a]
+        y_data = scores[a][x_data]
+
         plt.plot(x_data, y_data, label=a, marker='o')
         for x, y in zip(x_data, y_data):
             plt.text(x, y, y, ha='center', va='bottom')
