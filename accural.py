@@ -35,7 +35,7 @@ def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
         else:
             mean = np.mean(difference)
             scale = np.std(difference)
-            expected_interval = st.norm.ppf(1 - math.pow(0.1, phi), loc=mean, scale=scale)
+            expected_interval = st.norm.ppf(1 - np.power(0.1, phi), loc=mean, scale=scale)
             next_expected_arrival_time = arrival_time + expected_interval
 
     detection_time = next_expected_arrival_time - enviornment[-1]

@@ -7,7 +7,7 @@ import psutil
 import time
 import multiprocessing
 
-def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi):
+def bertier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi):
     pid = os.getpid()
 
     mistake_duration = 0
@@ -40,7 +40,7 @@ def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma
     return mistake_duration, detection_time, pa, cpu_time, memory
 
 
-def olivier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, gamma, beta, phi):
+def bertier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, gamma, beta, phi):
     if type(delay) == np.ndarray:
         length = len(delay)
     elif type(var) == np.ndarray:
@@ -76,7 +76,7 @@ def olivier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, ga
 
     return mistake_duration
 
-def olivier_estimate_for_n_array(enviornment, delta_i, n_array, delay, var, gamma, beta, phi):
+def bertier_estimate_for_n_array(enviornment, delta_i, n_array, delay, var, gamma, beta, phi):
     length = len(n_array)
     mistake_duration = np.zeros(length, dtype=float)
     expected_arrival_time = np.array([enviornment[0] for i in range(length)])
@@ -104,7 +104,7 @@ def olivier_estimate_for_n_array(enviornment, delta_i, n_array, delay, var, gamm
     return mistake_duration
 
 
-def olivier_estimate(enviornment, delta_i, n, delay, var, gamma, beta=1, phi=4):
+def bertier_estimate(enviornment, delta_i, n, delay, var, gamma, beta=1, phi=4):
     parameter_dic = {'n': n, 'delay': delay, 'var': var, 'gamma': gamma, 'beta': beta, 'phi': phi}
     int_list = []
     array_list = []
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     beta = 1
     phi = 4
 
-    mistake_duration, detection_time, pa, cpu_time, memory = olivier_estimate_for_single_value(arrival_time_array, delta_i, n, delay,
+    mistake_duration, detection_time, pa, cpu_time, memory = bertier_estimate_for_single_value(arrival_time_array, delta_i, n, delay,
                                                                                 var, gamma, beta, phi)
 
     print(f"{mistake_duration / 1000000:.2f} ms")
