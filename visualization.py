@@ -2,9 +2,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def horizontal_bar_chart(scores: pd.DataFrame):
+def horizontal_bar_chart(scores: pd.DataFrame, metrics=None):
+    if metrics is None:
+        metrics = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
+
     x_data = scores.keys()  # ['Accural', 'Chen', 'Olivier']
-    metrics = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
 
     bar_width = 0.1  # width of a single bar, can be dynamic
     interval = 0.01  # interval within a group of bars
@@ -32,18 +34,24 @@ def horizontal_bar_chart(scores: pd.DataFrame):
     plt.show()
 
 
-def line_chart(scores: pd.DataFrame):
-    x_data = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
+def line_chart(scores: pd.DataFrame, metrics=None):
+    if metrics is None:
+        x_data = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
+    else:
+        x_data = metrics
+
     algorithms = scores.keys()  # ['Accural', 'Chen', 'Olivier']
+
     for a in algorithms:
-        y_data = scores[a]
+        y_data = scores[a][x_data]
+
         plt.plot(x_data, y_data, label=a, marker='o')
         for x, y in zip(x_data, y_data):
             plt.text(x, y, y, ha='center', va='bottom')
 
     plt.yticks([i for i in range(0, 110, 10)])  # [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-    plt.xlabel("Algorithm")
+    plt.xlabel("Metric")
     plt.ylabel("Score")
     plt.title("Performance Overview")
 
