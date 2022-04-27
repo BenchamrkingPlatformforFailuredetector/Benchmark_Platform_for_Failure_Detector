@@ -1,0 +1,13 @@
+Outside: N=1000,
+delay=0,
+var=0,
+gamma=0.01,
+beta=1,
+phi=4;
+Inside: length=object->get_length(),
+sum=object->get_sum(),
+error=A-E-delay,
+delay=delay+gamma*error,
+var=var+gamma*(np.abs(error) - var),
+alpha=beta*delay+phi*var;
+EA: alpha+sum/length+((length+1)/2) * delta;

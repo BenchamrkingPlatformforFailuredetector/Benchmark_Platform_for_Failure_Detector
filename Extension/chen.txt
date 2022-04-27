@@ -1,0 +1,6 @@
+Outside: N=1000,
+alpha=100000;
+Inside: length=object->get_length(),
+sum=object->get_sum();
+EA: alpha+sum/length+((length+1)/2) * delta;
+

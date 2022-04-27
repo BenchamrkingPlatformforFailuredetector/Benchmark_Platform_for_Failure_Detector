@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from record import Record
+from Extension.record import Record
 import matplotlib.pyplot as plt
 import os
 import psutil
@@ -13,7 +13,7 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
     pid = os.getpid()
 
     mistake_duration = 0
-    next_expected_arrival_time = float('inf')
+    next_expected_arrival_time = enviornment[0]
     record = Record(n)
     wrong_count = 0
     for arrival_time in enviornment:
@@ -151,14 +151,9 @@ if __name__ == '__main__':
     # # # n_list = np.array([i for i in range(1, 101)])
     # n = 1000
     # # alpha_list = np.array([0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000], dtype=float)
-    # alpha = 10000
+    # alpha = 100000
     #
-    # q = multiprocessing.Queue()
-    # p = multiprocessing.Process(target=chen_estimate_for_single_value, args=(arrival_time_array, delta_i, n, alpha, q))
-    # p.start()
-    # p.join()
-    #
-    # mistake_duration, detection_time, pa, cpu_time, memory = q.get()
+    # mistake_duration, detection_time, pa, cpu_time, memory = chen_estimate_for_single_value(arrival_time_array, delta_i, n, alpha)
     #
     # print(f"{mistake_duration / 1000000:.2f} ms")
     # print(f"{detection_time / 1000000:.2f} ms")

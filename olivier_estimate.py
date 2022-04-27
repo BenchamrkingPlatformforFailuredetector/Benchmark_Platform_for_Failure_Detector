@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
-from record import Record
+from Extension.record import Record
 import matplotlib.pyplot as plt
 import os
 import psutil
 import time
 import multiprocessing
 
-def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi, q):
+def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi):
     pid = os.getpid()
 
     mistake_duration = 0
@@ -37,7 +37,7 @@ def olivier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma
     cpu_time = psutil.Process(pid).cpu_times().system
     memory = psutil.Process(pid).memory_info().rss / 1024 / 1024
 
-    q.put((mistake_duration, detection_time, pa, cpu_time, memory))
+    return mistake_duration, detection_time, pa, cpu_time, memory
 
 
 def olivier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, gamma, beta, phi):
@@ -151,13 +151,8 @@ if __name__ == '__main__':
     beta = 1
     phi = 4
 
-    q = multiprocessing.Queue()
-    p = multiprocessing.Process(target=olivier_estimate_for_single_value, args=(arrival_time_array, delta_i, n, delay,
-                                                                                var, gamma, beta, phi, q))
-    p.start()
-    p.join()
-
-    mistake_duration, detection_time, pa, cpu_time, memory = q.get()
+    mistake_duration, detection_time, pa, cpu_time, memory = olivier_estimate_for_single_value(arrival_time_array, delta_i, n, delay,
+                                                                                var, gamma, beta, phi)
 
     print(f"{mistake_duration / 1000000:.2f} ms")
     print(f"{detection_time / 1000000:.2f} ms")

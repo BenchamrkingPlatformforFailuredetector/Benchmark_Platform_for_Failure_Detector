@@ -1,0 +1,3 @@
+Outside: N=1000&delta&1;
+Inside: expected_interval=object->get_interval();
+EA: A+expected_interval;
