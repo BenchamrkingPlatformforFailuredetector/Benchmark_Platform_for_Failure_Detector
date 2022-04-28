@@ -62,56 +62,51 @@ def run(enviornment, language_file, record_class):
     exec(code, {'enviornment': enviornment, 'delta': 100000000.0}, g)
     return g['mistake_duration'], g['detection_time'], g['pa'], g['cpu_time'], g['memory']
 
+def run_all(language_file, record_class='record'):
+    node_list = [0, 1, 3, 5, 6, 7, 8, 9]
+    pool = multiprocessing.Pool(processes=56)
+    results = []
+    for i in node_list:
+        receive_from_node_list = copy.deepcopy(node_list)
+        receive_from_node_list.remove(i)
+        for j in receive_from_node_list:
+            df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
+            df = df[df.site == j]
+            arrival_time_array = np.array(df.timestamp_receive)
+            results.append(pool.apply_async(run, (arrival_time_array, language_file, record_class,)))
+
+    pool.close()
+    pool.join()
+    mistake_duration_list = []
+    detection_time_list = []
+    pa_list = []
+    cpu_time_list = []
+    memory_list = []
+    for res in results:
+        mistake_duration_list.append(res.get()[0] / 1000000)
+        detection_time_list.append(res.get()[1] / 1000000)
+        pa_list.append(res.get()[2])
+        cpu_time_list.append(res.get()[3])
+        memory_list.append(res.get()[4])
+
+    mistake_duration_array = np.array(mistake_duration_list)
+    detection_time_array = np.array(detection_time_list)
+    pa_array = np.array(pa_list)
+    cpu_time_array = np.array(cpu_time_list)
+    memory_array = np.array(memory_list)
+
+    return np.mean(mistake_duration_array), np.mean(detection_time_array), np.mean(pa_array), np.mean(cpu_time_array), \
+           np.mean(memory_array), np.std(detection_time_array), np.std(pa_array)
+
 
 if __name__ == '__main__':
-    df = pd.read_csv(r'.\data\Node0\trace.csv')
-    df = df[df.site == 8]
-    arrival_time_array = np.array(df.timestamp_receive)
-    mistake_duration, detection_time, pa, cpu_time, memory = run(arrival_time_array, 'accural', 'newrecord')
-    print(f"{mistake_duration / 1000000:.2f} ms")
-    print(f"{detection_time / 1000000:.2f} ms")
-    print(f"{pa:.2%}")
-    print(f"{cpu_time:.2f} s")
-    print(f"{memory:.2f} MB")
+    average_mistake_duration, average_detection_time, average_pa, average_cpu_time, average_memory, std_detection_time, std_pa = run_all('accural', 'newrecord')
 
-    # node_list = [0, 1, 3, 5, 6, 7, 8, 9]
-    # pool = multiprocessing.Pool(processes=56)
-    # results = []
-    # for i in node_list:
-    #     receive_from_node_list = copy.deepcopy(node_list)
-    #     receive_from_node_list.remove(i)
-    #     for j in receive_from_node_list:
-    #         df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
-    #         df = df[df.site == j]
-    #         arrival_time_array = np.array(df.timestamp_receive)
-    #         results.append(pool.apply_async(run, (arrival_time_array, 'chen', 'record',)))
-    #
-    # pool.close()
-    # pool.join()
-    # mistake_duration_list = []
-    # detection_time_list = []
-    # pa_list = []
-    # cpu_time_list = []
-    # memory_list = []
-    # for res in results:
-    #     mistake_duration_list.append(res.get()[0] / 1000000)
-    #     detection_time_list.append(res.get()[1] / 1000000)
-    #     pa_list.append(res.get()[2])
-    #     cpu_time_list.append(res.get()[3])
-    #     memory_list.append(res.get()[4])
-    #
-    # mistake_duration_array = np.array(mistake_duration_list)
-    # detection_time_array = np.array(detection_time_list)
-    # pa_array = np.array(pa_list)
-    # cpu_time_array = np.array(cpu_time_list)
-    # memory_array = np.array(memory_list)
-    #
-    # print(f"average mistake duration: {np.mean(mistake_duration_array):.2f} ms")
-    # print(f"average detection time: {np.mean(detection_time_array):.2f} ms")
-    # print(f"average pa: {np.mean(pa_array):.2%}")
-    # print(f"average cpu time: {np.mean(cpu_time_array):.2f} s")
-    # print(f"average memory: {np.mean(memory_array):.2f} MB")
-    # print(f"std mistake duration: {np.std(mistake_duration_array):.2f} ms")
-    # print(f"std detection time: {np.std(detection_time_array):.2f} ms")
-    # print(f"std pa: {np.std(pa_array):.2%}")
+    print(f"average mistake duration: {average_mistake_duration:.2f} ms")
+    print(f"average detection time: {average_detection_time:.2f} ms")
+    print(f"average pa: {average_pa:.2%}")
+    print(f"average cpu time: {average_cpu_time:.2f} s")
+    print(f"average memory: {average_memory:.2f} MB")
+    print(f"std detection time: {std_detection_time:.2f} ms")
+    print(f"std pa: {std_pa:.2%}")
 

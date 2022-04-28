@@ -139,7 +139,6 @@ if __name__ == '__main__':
     print(f"average pa: {np.mean(pa_array):.2%}")
     print(f"average cpu time: {np.mean(cpu_time_array):.2f} s")
     print(f"average memory: {np.mean(memory_array):.2f} MB")
-    print(f"std mistake duration: {np.std(mistake_duration_array):.2f} ms")
     print(f"std detection time: {np.std(detection_time_array):.2f} ms")
     print(f"std pa: {np.std(pa_array):.2%}")
 

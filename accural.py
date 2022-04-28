@@ -124,72 +124,71 @@ def accural_estimate(enviornment, delta_i, n, phi):
     return mistake_duration
 
 if __name__ == '__main__':
-    # delta_i = 100000000.0
-    # n = 1000
-    # phi = 10
-    # node_list = [0, 1, 3, 5, 6, 7, 8, 9]
-    # pool = multiprocessing.Pool(processes=56)
-    # results = []
-    # for i in node_list:
-    #     receive_from_node_list = copy.deepcopy(node_list)
-    #     receive_from_node_list.remove(i)
-    #     for j in receive_from_node_list:
-    #         df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
-    #         df = df[df.site == j]
-    #         arrival_time_array = np.array(df.timestamp_receive)
-    #         results.append(pool.apply_async(accural_estimate_for_single_value, (arrival_time_array, delta_i, n, phi,)))
-    #
-    # pool.close()
-    # pool.join()
-    # mistake_duration_list = []
-    # detection_time_list = []
-    # pa_list = []
-    # cpu_time_list = []
-    # memory_list = []
-    # for res in results:
-    #     mistake_duration_list.append(res.get()[0] / 1000000)
-    #     detection_time_list.append(res.get()[1] / 1000000)
-    #     pa_list.append(res.get()[2])
-    #     cpu_time_list.append(res.get()[3])
-    #     memory_list.append(res.get()[4])
-    #
-    # mistake_duration_array = np.array(mistake_duration_list)
-    # detection_time_array = np.array(detection_time_list)
-    # pa_array = np.array(pa_list)
-    # cpu_time_array = np.array(cpu_time_list)
-    # memory_array = np.array(memory_list)
-    #
-    # print(f"average mistake duration: {np.mean(mistake_duration_array):.2f} ms")
-    # print(f"average detection time: {np.mean(detection_time_array):.2f} ms")
-    # print(f"average pa: {np.mean(pa_array):.2%}")
-    # print(f"average cpu time: {np.mean(cpu_time_array):.2f} s")
-    # print(f"average memory: {np.mean(memory_array):.2f} MB")
-    # print(f"std mistake duration: {np.std(mistake_duration_array):.2f} ms")
-    # print(f"std detection time: {np.std(detection_time_array):.2f} ms")
-    # print(f"std pa: {np.std(pa_array):.2%}")
-
-
-    df = pd.read_csv(r'.\data\Node0\trace.csv')
-    df = df[df.site == 8]
-    arrival_time_array = np.array(df.timestamp_receive)
-
     delta_i = 100000000.0
-    # n = 1000
     n = 1000
-    phi = 1
-    # phi = np.array([i for i in range(1000)])
-    # phi = phi / 100
+    phi = 10
+    node_list = [0, 1, 3, 5, 6, 7, 8, 9]
+    pool = multiprocessing.Pool(processes=56)
+    results = []
+    for i in node_list:
+        receive_from_node_list = copy.deepcopy(node_list)
+        receive_from_node_list.remove(i)
+        for j in receive_from_node_list:
+            df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
+            df = df[df.site == j]
+            arrival_time_array = np.array(df.timestamp_receive)
+            results.append(pool.apply_async(accural_estimate_for_single_value, (arrival_time_array, delta_i, n, phi,)))
 
-    mistake_duration, detection_time, pa, cpu_time, memory = accural_estimate_for_single_value(arrival_time_array, delta_i, n, phi)
+    pool.close()
+    pool.join()
+    mistake_duration_list = []
+    detection_time_list = []
+    pa_list = []
+    cpu_time_list = []
+    memory_list = []
+    for res in results:
+        mistake_duration_list.append(res.get()[0] / 1000000)
+        detection_time_list.append(res.get()[1] / 1000000)
+        pa_list.append(res.get()[2])
+        cpu_time_list.append(res.get()[3])
+        memory_list.append(res.get()[4])
 
-    print(f"{mistake_duration / 1000000:.2f} ms")
-    print(f"{detection_time / 1000000:.2f} ms")
-    print(f"{pa:.2%}")
-    print(f"{cpu_time:.2f} s")
-    print(f"{memory:.2f} MB")
+    mistake_duration_array = np.array(mistake_duration_list)
+    detection_time_array = np.array(detection_time_list)
+    pa_array = np.array(pa_list)
+    cpu_time_array = np.array(cpu_time_list)
+    memory_array = np.array(memory_list)
+
+    print(f"average mistake duration: {np.mean(mistake_duration_array):.2f} ms")
+    print(f"average detection time: {np.mean(detection_time_array):.2f} ms")
+    print(f"average pa: {np.mean(pa_array):.2%}")
+    print(f"average cpu time: {np.mean(cpu_time_array):.2f} s")
+    print(f"average memory: {np.mean(memory_array):.2f} MB")
+    print(f"std detection time: {np.std(detection_time_array):.2f} ms")
+    print(f"std pa: {np.std(pa_array):.2%}")
+
+
+    # df = pd.read_csv(r'.\data\Node0\trace.csv')
+    # df = df[df.site == 8]
+    # arrival_time_array = np.array(df.timestamp_receive)
     #
-    # # plt.plot(n, mistake_duration)
-    # # plt.show()
+    # delta_i = 100000000.0
+    # # n = 1000
+    # n = 1000
+    # phi = 1
+    # # phi = np.array([i for i in range(1000)])
+    # # phi = phi / 100
+    #
+    # mistake_duration, detection_time, pa, cpu_time, memory = accural_estimate_for_single_value(arrival_time_array, delta_i, n, phi)
+    #
+    # print(f"{mistake_duration / 1000000:.2f} ms")
+    # print(f"{detection_time / 1000000:.2f} ms")
+    # print(f"{pa:.2%}")
+    # print(f"{cpu_time:.2f} s")
+    # print(f"{memory:.2f} MB")
+    # #
+    # # # plt.plot(n, mistake_duration)
+    # # # plt.show()
 
 
 
