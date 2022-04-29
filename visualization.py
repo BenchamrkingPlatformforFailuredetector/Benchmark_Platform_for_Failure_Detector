@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def horizontal_bar_chart(scores: pd.DataFrame, metrics=None):
+def horizontal_bar_chart(scores, metrics=None):
+    scores: pd.DataFrame = pd.DataFrame(scores)
     if metrics is None:
         metrics = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
 
@@ -34,7 +35,8 @@ def horizontal_bar_chart(scores: pd.DataFrame, metrics=None):
     plt.show()
 
 
-def line_chart(scores: pd.DataFrame, metrics=None):
+def line_chart(scores, metrics=None):
+    scores: pd.DataFrame = pd.DataFrame(scores)
     if metrics is None:
         x_data = scores.index  # ['total', 'detection time', 'pa', 'mistake duration', 'CPU time', 'memory usage']
     else:
