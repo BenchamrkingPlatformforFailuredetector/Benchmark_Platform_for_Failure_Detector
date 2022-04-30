@@ -29,8 +29,8 @@ def calc_score(metric_data, weights=(0.1, 0.2, 0.2, 0.1, 0.1, 0.15, 0.15)):
     total_score = 0
     for i in range(len(metric_data)):
         unweighted_score = funcs[i](metric_data[i])
-        scores[names[i]] = unweighted_score
-        total_score += unweighted_score * weights[i]
+        scores[names[i]] = round(unweighted_score, 1)
+        total_score += round(unweighted_score * weights[i], 1)
     scores["total"] = total_score
     return scores
 
@@ -44,7 +44,10 @@ if __name__ == '__main__':
                     1.6750364820071866, 0.0008348593499185055)
     bertier_data = (644043.3404513125, 100.91581011049107, 0.9112516167575638, 0.375, 82.63825334821429,
                     1.059675334140229, 0.02535474631119393)
+    chen_data = (2353438.4988998906, 100.09092747600445, 0.7423359876953095, 0.294921875, 82.54171316964286,
+                 0.9009301070789003, 0.08329813139516726)
     visual_input = {}
     feed_to_visual(visual_input, "accural", accural_data)
     feed_to_visual(visual_input, "bertier", bertier_data)
+    feed_to_visual(visual_input, "chen", chen_data)
     print(visual_input)
