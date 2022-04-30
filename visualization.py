@@ -62,14 +62,22 @@ def line_chart(scores, metrics=None):
 
 
 if __name__ == '__main__':
+    # data = {
+    #     "Accural": {"total": 100, "detection time": 100, "pa": 100, "mistake duration": 100, "CPU time": 100,
+    #                 "memory usage": 100},
+    #     "Chen": {"total": 80, "detection time": 90, "pa": 80, "mistake duration": 70, "CPU time": 95,
+    #              "memory usage": 60},
+    #     "Olivier": {"total": 90, "detection time": 75, "pa": 95, "mistake duration": 80, "CPU time": 70,
+    #                 "memory usage": 80},
+    # }
     data = {
-        "Accural": {"total": 100, "detection time": 100, "pa": 100, "mistake duration": 100, "CPU time": 100,
-                    "memory usage": 100},
-        "Chen": {"total": 80, "detection time": 90, "pa": 80, "mistake duration": 70, "CPU time": 95,
-                 "memory usage": 60},
-        "Olivier": {"total": 90, "detection time": 75, "pa": 95, "mistake duration": 80, "CPU time": 70,
-                    "memory usage": 80},
-    }
+        'accural': {'mistake duration': 90.0, 'detection time': 60.0, 'pa': 90.0, 'CPU time': 49.1,
+                    'memory usage': 62.3, 'detection time std': 70.4, 'pa std': 90.0, 'total': 74.2},
+        'bertier': {'mistake duration': 81.9, 'detection time': 85.1, 'pa': 81.7, 'CPU time': 83.2,
+                    'memory usage': 92.1, 'detection time std': 79.3, 'pa std': 81.2, 'total': 83.10000000000001},
+        'chen': {'mistake duration': 60.0, 'detection time': 89.4, 'pa': 65.6, 'CPU time': 95.3, 'memory usage': 92.2,
+                 'detection time std': 81.6, 'pa std': 60.3, 'total': 76.9}}
+
     df = pd.DataFrame(data)
 
     horizontal_bar_chart(df)
