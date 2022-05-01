@@ -35,8 +35,12 @@ def calc_score(metric_data, weights=(0.1, 0.2, 0.2, 0.1, 0.1, 0.15, 0.15)):
     return scores
 
 
-def feed_to_visual(visual_data, algo_name, metric_data, weights=(0.1, 0.2, 0.2, 0.1, 0.1, 0.15, 0.15)):
+def feed_to_visual(algo_name, metric_data, visual_data=None, weights=(0.1, 0.2, 0.2, 0.1, 0.1, 0.15, 0.15)):
+    # visual data is the argument you can directly pass into the functions in visualization.py
+    if visual_data is None:
+        visual_data = {}
     visual_data.update({algo_name: calc_score(metric_data, weights)})
+    return visual_data
 
 
 if __name__ == '__main__':
@@ -47,7 +51,7 @@ if __name__ == '__main__':
     chen_data = (2353438.4988998906, 100.09092747600445, 0.7423359876953095, 0.294921875, 82.54171316964286,
                  0.9009301070789003, 0.08329813139516726)
     visual_input = {}
-    feed_to_visual(visual_input, "accural", accural_data)
-    feed_to_visual(visual_input, "bertier", bertier_data)
-    feed_to_visual(visual_input, "chen", chen_data)
+    feed_to_visual("accural", accural_data, visual_input)
+    feed_to_visual("bertier", bertier_data, visual_input)
+    feed_to_visual("chen", chen_data, visual_input)
     print(visual_input)
