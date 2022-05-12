@@ -70,13 +70,15 @@ if __name__ == '__main__':
     #     "Olivier": {"total": 90, "detection time": 75, "pa": 95, "mistake duration": 80, "CPU time": 70,
     #                 "memory usage": 80},
     # }
+
     data = {
-        'accural': {'mistake duration': 90.0, 'detection time': 60.0, 'pa': 90.0, 'CPU time': 49.1,
-                    'memory usage': 62.3, 'detection time std': 70.4, 'pa std': 90.0, 'total': 74.2},
-        'bertier': {'mistake duration': 81.9, 'detection time': 85.1, 'pa': 81.7, 'CPU time': 83.2,
-                    'memory usage': 92.1, 'detection time std': 79.3, 'pa std': 81.2, 'total': 83.1},
-        'chen': {'mistake duration': 60.0, 'detection time': 89.4, 'pa': 65.6, 'CPU time': 95.3, 'memory usage': 92.2,
-                 'detection time std': 81.6, 'pa std': 60.3, 'total': 76.9}}
+        'accural': {'detection time': 60.0, 'pa': 90.0, 'detection time std': 70.4, 'pa std': 90.0,
+                    'mistake duration': 90.0, 'CPU time': 49.1, 'memory usage': 62.3, 'total': 74.2},
+        'bertier': {'detection time': 85.1, 'pa': 81.7, 'detection time std': 79.3, 'pa std': 81.2,
+                    'mistake duration': 81.9, 'CPU time': 83.2, 'memory usage': 92.1, 'total': 83.1},
+        'chen': {'detection time': 89.4, 'pa': 65.6, 'detection time std': 81.6, 'pa std': 60.3,
+                 'mistake duration': 60.0, 'CPU time': 95.3, 'memory usage': 92.2, 'total': 76.9}
+    }
 
     df = pd.DataFrame(data)
 
