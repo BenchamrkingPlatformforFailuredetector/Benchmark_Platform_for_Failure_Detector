@@ -9,6 +9,7 @@ import time
 import multiprocessing
 import copy
 
+
 def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
     pid = os.getpid()
 
@@ -46,6 +47,7 @@ def accural_estimate_for_single_value(enviornment, delta_i, n, phi):
     return mistake_duration, detection_time, pa, cpu_time, memory
     # q.put( (mistake_duration, detection_time, pa, cpu_time, memory) )
 
+
 def accural_estimate_for_phi_array(enviornment, delta_i, n, phi_array):
     length = len(phi_array)
     mistake_duration = np.zeros(length, dtype=float)
@@ -73,6 +75,7 @@ def accural_estimate_for_phi_array(enviornment, delta_i, n, phi_array):
             expected_interval = st.norm.ppf(1 - np.power(0.1, phi_array), loc=mean, scale=scale)
             expected_arrival_time = arrival_time + expected_interval
     return mistake_duration
+
 
 def accural_estimate_for_n_array(enviornment, delta_i, n_array, phi):
     length = len(n_array)
@@ -107,6 +110,7 @@ def accural_estimate_for_n_array(enviornment, delta_i, n_array, phi):
         expected_arrival_time = arrival_time + interval_list
     return mistake_duration
 
+
 def accural_estimate(enviornment, delta_i, n, phi):
     if type(n) != np.ndarray and type(n) != int:
         raise TypeError('The data type of n can only be numpy array or int')
@@ -122,6 +126,7 @@ def accural_estimate(enviornment, delta_i, n, phi):
     else:
         mistake_duration = accural_estimate_for_single_value(enviornment, delta_i, n, phi)
     return mistake_duration
+
 
 if __name__ == '__main__':
     delta_i = 100000000.0
@@ -167,7 +172,6 @@ if __name__ == '__main__':
     print(f"std detection time: {np.std(detection_time_array):.2f} ms")
     print(f"std pa: {np.std(pa_array):.2%}")
 
-
     # df = pd.read_csv(r'.\data\Node0\trace.csv')
     # df = df[df.site == 8]
     # arrival_time_array = np.array(df.timestamp_receive)
@@ -189,6 +193,3 @@ if __name__ == '__main__':
     # #
     # # # plt.plot(n, mistake_duration)
     # # # plt.show()
-
-
-

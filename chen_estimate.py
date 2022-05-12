@@ -25,7 +25,6 @@ def chen_estimate_for_single_value(enviornment, delta_i, n, alpha):
             mistake_duration += arrival_time - next_expected_arrival_time
             wrong_count += 1
 
-
         next_expected_arrival_time = alpha + current_sum / current_length + ((current_length + 1) / 2) * delta_i
 
     detection_time = next_expected_arrival_time - enviornment[-1]
@@ -53,7 +52,7 @@ def chen_estimate_for_alpha_array(enviornment, delta_i, n, alpha_list):
         mistake_duration += duration
 
         next_expected_arrival_time = alpha_list + current_sum / current_length + (
-                        (current_length + 1) / 2) * delta_i
+                (current_length + 1) / 2) * delta_i
 
     return mistake_duration
 
@@ -78,6 +77,7 @@ def chen_estimate_for_n_array(enviornment, delta_i, n_list, alpha):
                 (current_length + 1) / 2) * delta_i
 
     return mistake_duration
+
 
 def chen_estimate(enviornment, delta_i, n_list, alpha_list):
     if type(n_list) != np.ndarray and type(n_list) != int:

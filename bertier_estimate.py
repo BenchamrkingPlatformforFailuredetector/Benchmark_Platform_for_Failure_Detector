@@ -7,6 +7,7 @@ import psutil
 import time
 import multiprocessing
 
+
 def bertier_estimate_for_single_value(enviornment, delta_i, n, delay, var, gamma, beta, phi):
     pid = os.getpid()
 
@@ -76,6 +77,7 @@ def bertier_estimate_for_parameter_array(enviornment, delta_i, n, delay, var, ga
 
     return mistake_duration
 
+
 def bertier_estimate_for_n_array(enviornment, delta_i, n_array, delay, var, gamma, beta, phi):
     length = len(n_array)
     mistake_duration = np.zeros(length, dtype=float)
@@ -133,6 +135,7 @@ def bertier_estimate(enviornment, delta_i, n, delay, var, gamma, beta=1, phi=4):
     else:
         raise TypeError('There are more than one array in the parameters')
 
+
 if __name__ == '__main__':
     df = pd.read_csv(r'.\data\Node0\trace.csv')
     df = df[df.site == 8]
@@ -151,8 +154,9 @@ if __name__ == '__main__':
     beta = 1
     phi = 4
 
-    mistake_duration, detection_time, pa, cpu_time, memory = bertier_estimate_for_single_value(arrival_time_array, delta_i, n, delay,
-                                                                                var, gamma, beta, phi)
+    mistake_duration, detection_time, pa, cpu_time, memory = bertier_estimate_for_single_value(arrival_time_array,
+                                                                                               delta_i, n, delay,
+                                                                                               var, gamma, beta, phi)
 
     print(f"{mistake_duration / 1000000:.2f} ms")
     print(f"{detection_time / 1000000:.2f} ms")
