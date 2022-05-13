@@ -99,7 +99,7 @@ def run_all(language_file, record_class='record'):
     cpu_time_array = np.array(cpu_time_list)
     memory_array = np.array(memory_list)
 
-    return np.mean(detection_time_array), np.mean(pa_array), np.std(detection_time_array), np.std(pa_array), \
+    return np.mean(detection_time_array), np.std(detection_time_array), np.mean(pa_array), np.std(pa_array), \
            np.mean(mistake_duration_array), np.mean(cpu_time_array), np.mean(memory_array)
 
 
