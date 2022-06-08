@@ -1,5 +1,5 @@
-# A Benchmark Platform for Failure Detectors  
-The project features a benchmark platform that allows users to specify FD algorithms, 
+# A Benchmarking Platform for Failure Detectors  
+The project features a benchmarking platform that allows users to specify FD algorithms, 
 gives an objective evaluation of the performance of different failure detectors, and visualizes
 the results in various ways. Since PlanetLab data is used for the benchmark algorithm, 
 no distributed environment is required for running the code. Now, the program
