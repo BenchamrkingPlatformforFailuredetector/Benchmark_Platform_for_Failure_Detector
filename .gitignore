@@ -154,3 +154,6 @@ hs_err_pid*
 
 # IDEA files
 .idea
+
+# MyData files
+*.mydata
