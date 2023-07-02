@@ -1,7 +1,9 @@
 import numpy as np
 
+from _record import AbstractRecord
 
-class Record:
+
+class Record(AbstractRecord):
     """
     This data structure is used to store the actual arrival time. The length of this
     data structure is defined by the users as the parameter 'n'. It works as the following:
@@ -17,7 +19,7 @@ class Record:
         self.array = np.zeros(n, dtype=float)
         self.start_pointer = 0
         self.end_pointer = 0
-        self.difference = np.array([float('-inf') for i in range(n-1)])
+        self.difference = np.array([float('-inf') for _ in range(n - 1)])
         self.start_pointer_difference = 0
         self.end_pointer_difference = 0
 
@@ -69,7 +71,7 @@ class Record:
 
 if __name__ == '__main__':
     record = Record(5)
-    l = [5,8,10,15,21,30, 33, 40, 50, 61]
+    l = [5, 8, 10, 15, 21, 30, 33, 40, 50, 61]
     for i in l:
         record.append(i)
         print(record.get_difference())
