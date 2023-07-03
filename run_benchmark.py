@@ -1,4 +1,5 @@
 import argparse
+import glob
 import os
 import sys
 import pickle
@@ -9,10 +10,18 @@ def main():
 
     time.sleep(3)
 
-    traces_dir = args.t
-    extension_dir = args.E
-    record_file = args.R
+    # Input:
+    traces_dir = args.t  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\data"
+    extension_dir = args.E  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension"
+    record_file = args.R  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension\record.py"
 
+    results = glob.glob(os.path.join(extension_dir, "*.txt"))
+    for r in results:
+        base_name = os.path.basename(r)
+        print(base_name)
+    print(results)
+
+    # Output:
     # Data must look like this!
     # {fd_name: (detection time, detection time std, pa, pa std, mistake duration, cpu, memory)}
     data = {"accural": (105.74858808928572, 1.6750364820071866, 0.9979379611895526, 0.0008348593499185055,
