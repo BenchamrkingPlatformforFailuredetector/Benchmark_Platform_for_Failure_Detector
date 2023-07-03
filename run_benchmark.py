@@ -15,11 +15,12 @@ def main():
     extension_dir = args.E  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension"
     record_file = args.R  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension\record.py"
 
-    results = glob.glob(os.path.join(extension_dir, "*.txt"))
-    for r in results:
-        base_name = os.path.basename(r)
-        print(base_name)
-    print(results)
+    # How to iterate through a directory:
+    # results = glob.glob(os.path.join(extension_dir, "*.txt"))
+    # for r in results:
+    #     base_name = os.path.basename(r)
+    #     print(base_name)
+    # print(results)
 
     # Output:
     # Data must look like this!
