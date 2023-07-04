@@ -14,7 +14,7 @@ class AbstractRecord(ABC):
 
     @abstractmethod
     def get_latest_one(self):
-        raise NotImplementedError("abstract method 'get_latest_on' not implemented")
+        raise NotImplementedError("abstract method 'get_latest_one' not implemented")
 
     @abstractmethod
     def append(self):
