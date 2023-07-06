@@ -6,6 +6,7 @@ import psutil
 import time
 import multiprocessing
 import copy
+import concurrent.futures
 
 
 def translate(language_file, record_class):
@@ -66,18 +67,38 @@ def run(enviornment, language_file, record_class):
     return g['mistake_duration'], g['detection_time'], g['pa'], g['cpu_time'], g['memory']
 
 
-def run_all(language_file, record_class='record'):
-    node_list = [0, 1, 3, 5, 6, 7, 8, 9]
-    pool = multiprocessing.Pool(processes=56)
+def run_all(language_file, data_file, record_class, processes=32):
+    pool = multiprocessing.Pool(processes=processes)
     results = []
-    for i in node_list:
-        receive_from_node_list = copy.deepcopy(node_list)
-        receive_from_node_list.remove(i)
-        for j in receive_from_node_list:
-            df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
-            df = df[df.site == j]
-            arrival_time_array = np.array(df.timestamp_receive)
-            results.append(pool.apply_async(run, (arrival_time_array, language_file, record_class,)))
+    directories = []
+    for item in os.listdir(data_file):
+        item_path = os.path.join(data_file, item)
+        if os.path.isdir(item_path):
+            directories.append(item)
+    for i in directories:
+        for j in directories:
+            if i != j:
+                node_path = os.path.join(data_file, i)
+                csv_path = os.path.join(node_path, 'trace.csv')
+                df = pd.read_csv(csv_path)
+                df = df[df.site == int(j[4:])]
+                arrival_time_array = np.array(df.timestamp_receive)
+                results.append(pool.apply_async(run, (arrival_time_array, language_file, record_class,)))
+
+    # node_list = [0, 1, 3, 5, 6, 7, 8, 9]
+    # pool = multiprocessing.Pool(processes=processes)
+    # results = []
+    #
+    # for i in node_list:
+    #     receive_from_node_list = copy.deepcopy(node_list)
+    #     receive_from_node_list.remove(i)
+    #     for j in receive_from_node_list:
+    #         print(i,j)
+    #         df = pd.read_csv(r'.\data\Node{}\trace.csv'.format(i))
+    #         df = df[df.site == j]
+    #         arrival_time_array = np.array(df.timestamp_receive)
+    #         results.append(pool.apply_async(run, (arrival_time_array, language_file, record_class,)))
+    #
 
     pool.close()
     pool.join()
@@ -104,8 +125,9 @@ def run_all(language_file, record_class='record'):
 
 
 if __name__ == '__main__':
-    average_detection_time, average_pa, std_detection_time, std_pa, average_mistake_duration, average_cpu_time, \
-    average_memory = run_all('accural', 'newrecord')
+    average_detection_time, std_detection_time, average_pa, std_pa, average_mistake_duration, average_cpu_time, \
+    average_memory = run_all('chen', r"C:\Users\34893\PycharmProjects\Benchmark_Platform_for_Failure_Detector\data", 'record')
+    # run_all('accural', 'newrecord')
 
     print(f"average mistake duration: {average_mistake_duration:.2f} ms")
     print(f"average detection time: {average_detection_time:.2f} ms")

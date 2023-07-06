@@ -1,6 +1,6 @@
 import numpy as np
 
-from _record import AbstractRecord
+from Extension._record import AbstractRecord
 
 
 class Record(AbstractRecord):
