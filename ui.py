@@ -611,10 +611,14 @@ class MyCanvas(FigureCanvasQTAgg):
         self.ax.set_ylabel("Algorithm")
         self.ax.set_xlabel("Score")
         self.ax.set_title("Performance Overview")
-        handles, labels = self.ax.get_legend_handles_labels()
-        # about legend location: https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
-        self.ax.legend(reversed(handles), reversed(labels), loc="upper center",
-                       bbox_to_anchor=(0.5, -0.07), ncol=len(metrics))
+
+        # add legend only if x and y axes both have data
+        if not (x_data.empty or metrics.empty):
+            handles, labels = self.ax.get_legend_handles_labels()
+            # about legend location: https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
+            self.ax.legend(reversed(handles), reversed(labels), loc="upper center",
+                           bbox_to_anchor=(0.5, -0.07), ncol=len(metrics))
+
         # draw on canvas
         self.draw()
 
@@ -638,7 +642,10 @@ class MyCanvas(FigureCanvasQTAgg):
         self.ax.set_ylabel("Score")
         self.ax.set_title("Performance Overview")
 
-        self.ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.07), ncol=len(failure_detectors))
+        # add legend only if x and y axes both have data
+        if not (x_data.empty or failure_detectors.empty):
+            self.ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.07), ncol=len(failure_detectors))
+
         # draw on canvas
         self.draw()
 
