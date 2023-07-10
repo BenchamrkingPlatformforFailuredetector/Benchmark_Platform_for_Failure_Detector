@@ -27,8 +27,9 @@ def calc_score(metric_data, weights=(0.2, 0.15, 0.2, 0.15, 0.1, 0.1, 0.1)):
     total_score = 0
     for i in range(len(metric_data)):
         unweighted_score = funcs[i](metric_data[i])
-        scores[names[i]] = round(unweighted_score, 1)
+        scores[names[i]] = float(f"{round(unweighted_score, 1):.1f}")
         total_score += round(unweighted_score * weights[i], 1)
+    total_score = float(f"{total_score:.1f}")
     scores["total"] = total_score
     return scores
 
