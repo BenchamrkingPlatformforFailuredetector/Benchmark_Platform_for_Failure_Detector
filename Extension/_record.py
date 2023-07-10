@@ -27,3 +27,7 @@ class AbstractRecord(ABC):
     @abstractmethod
     def get_difference(self):
         raise NotImplementedError("abstract method 'get_difference' not implemented")
+
+    @abstractmethod
+    def get_jitter(self):
+        raise NotImplementedError("abstract method 'get_jitter' not implemented")

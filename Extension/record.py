@@ -68,6 +68,13 @@ class Record(AbstractRecord):
         difference = self.difference[self.difference >= 0]
         return difference
 
+    def get_jitter(self, epsilon):
+        self.arrival_time = 90
+        self.estimated_arrival_time = 80
+        if abs(self.estimated_arrival_time - self.arrival_time) > epsilon:
+            return True
+        return False
+
 
 if __name__ == '__main__':
     record = Record(5)
