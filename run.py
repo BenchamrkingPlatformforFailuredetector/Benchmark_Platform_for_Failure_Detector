@@ -41,7 +41,7 @@ def translate(language_file, record_class):
                 for j in content.split(','):
                     parameter = j.split('=')[0]
                     value = j.split('=')[1].replace('object->', '{}.'.format(record_class)).replace('A', 'arrival_time') \
-                        .replace('E', 'next_expected_arrival_time')
+                        .replace('E', 'next_expected_arrival_time').replace('&', ',')
                     code += '\t{}={}'.format(parameter, value) + '\n'
                 code += '\tif arrival_time > next_expected_arrival_time:\n'
                 code += '\t\tmistake_duration += arrival_time - next_expected_arrival_time\n'

@@ -24,15 +24,59 @@ class Record(AbstractRecord):
         self.end_pointer_difference = 0
 
     def get_sum(self):
+        """
+        This method is used to calculate the sum of all arrival times stored in the data structure. It is necessary since
+        Chen's and Bertier's algorithms both require this function to calculate the next expected arrival time.
+
+        Args:
+            None
+
+        Returns:
+            int: The sum of all arrival time stored in the data structure
+        """
         return self.sum
 
     def get_length(self):
+        """
+        This method is used to calculate the current length of the data structure. It works together with get_sum function
+        to calculate the next expected arrival time
+
+        Args:
+            None
+
+        Returns:
+            int: If the number of existing arrival time doesn't reach the max length of the data structure, which is defined
+            by the user as the parameter 'n', it returns the current number of arrival time stored in the data structure.
+            Else, it returns the max length of the data structure
+        """
         return self.current_length
 
     def get_latest_one(self):
+        """
+        This method is used to get the latest arrival time in the data structure.
+
+        Args:
+            None
+
+        Returns:
+            int: The latest arrival time in the data structure
+        """
         return self.array[self.end_pointer - 1]
 
     def append(self, a):
+        """
+        This method is used to add new arrival time into the data structure. If the current length of this data structure
+        doesn't reach the max length of the data structure, this method will append the new arrival time into the data
+        structure. Else, it will firstly pop out the earliest arrival time stored in the data structure and then append
+        the new arrival time into the data structure. Moreover, during thr process of appending, this method also
+        calculate the difference between adjacent arrival times.
+
+        Args:
+            a (int): next arrival time
+
+        Returns:
+            int: the earliest arrival time stored in the data structure
+        """
         if self.current_length < self.max_length:
             self.array[self.end_pointer] = a
             self.end_pointer = (self.end_pointer + 1) % self.max_length
@@ -59,21 +103,54 @@ class Record(AbstractRecord):
             return earliest_value
 
     def get_array(self):
+        """
+        This method is used to demonstrate the data structure as an numpy array.
+
+        Args:
+            None
+
+        Returns:
+            np.array: The data structure shown as numpy.array
+        """
         if self.current_length < self.max_length:
             return self.array[self.start_pointer:self.end_pointer]
         else:
             return np.concatenate((self.array[self.start_pointer:], self.array[:self.end_pointer]), axis=0)
 
     def get_difference(self):
+        """
+        This method is used to show the difference between adjacent arrival times.
+
+        Args:
+            None
+
+        Returns:
+            np.array: The difference between adjacent arrival times shown as np.array
+        """
         difference = self.difference[self.difference >= 0]
         return difference
 
-    def get_jitter(self, epsilon):
-        self.arrival_time = 90
-        self.estimated_arrival_time = 80
-        if abs(self.estimated_arrival_time - self.arrival_time) > epsilon:
+    def get_jitter(self, epsilon, next_expected_arrival_time):
+        """
+        This method is used to show whether there is a jitter here. It works as the following way:
+        if the absolute value of the difference between next expected arrival time
+        (calculated by a specific failure detector algorithm) and the latest arrival time is bigger than epsilon,
+        then we say there exists a jitter and returns True. Else, we say the network signal is kind of stable and return
+        False.
+
+        Args:
+            epsilon (int): the value given by the user as a thereshold for the jitter.
+            next_expected_arrival_time (int): The next expected heartbeat signal arrival time calculated by a specific
+            failure detector
+
+        Returns:
+            Bool: determine whether there exists a jitter in the network enviornment.
+        """
+        arrival = self.get_latest_one()
+        if abs(next_expected_arrival_time - arrival) > epsilon:
             return True
-        return False
+        else:
+            return False
 
 
 if __name__ == '__main__':

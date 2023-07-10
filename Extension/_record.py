@@ -17,7 +17,7 @@ class AbstractRecord(ABC):
         raise NotImplementedError("abstract method 'get_latest_one' not implemented")
 
     @abstractmethod
-    def append(self):
+    def append(self, a):
         raise NotImplementedError("abstract method 'append' not implemented")
 
     @abstractmethod
@@ -29,5 +29,5 @@ class AbstractRecord(ABC):
         raise NotImplementedError("abstract method 'get_difference' not implemented")
 
     @abstractmethod
-    def get_jitter(self):
+    def get_jitter(self,  epsilon, next_expected_arrival_time):
         raise NotImplementedError("abstract method 'get_jitter' not implemented")
