@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         cwd = os.getcwd()
         self.traces_dir = os.path.join(cwd, 'data') if os.path.exists('data') else None
         self.extension_dir = os.path.join(cwd, 'Extension') if os.path.exists('Extension') else None
-        self.record_file = os.path.join(cwd, 'Extension\\record.py') if os.path.exists('Extension\\record.py') else None
+        # self.record_file = os.path.join(cwd, 'Extension\\record.py') if os.path.exists('Extension\\record.py') else None
         self.score_file = None
         self.last_directory = cwd  # last selected directory by user
 
@@ -77,18 +77,18 @@ class MainWindow(QMainWindow):
         self.detected_fd_label = QLabel(f"Detected FD(s): {' '.join(self.search_for_fd(self.extension_dir))}")
         benchmark_container_layout.addWidget(self.detected_fd_label)
 
-        record_file_container = QWidget()
-        record_file_container_layout = QHBoxLayout()
-        get_record_file_button = QPushButton("select")
-        get_record_file_button.clicked.connect(self.on_get_record_file)
-        get_record_file_button.setMaximumSize(120, 45)
-        record_file_container_layout.addWidget(get_record_file_button)
-        self.record_file_label = QLabel(f"Record file: {self.record_file if self.record_file else '(not selected)'}")
-        record_file_container_layout.addWidget(self.record_file_label)
-        record_file_container_layout.setAlignment(Qt.AlignCenter)
-        record_file_container.setLayout(record_file_container_layout)
-
-        benchmark_container_layout.addWidget(record_file_container)
+        # record_file_container = QWidget()
+        # record_file_container_layout = QHBoxLayout()
+        # get_record_file_button = QPushButton("select")
+        # get_record_file_button.clicked.connect(self.on_get_record_file)
+        # get_record_file_button.setMaximumSize(120, 45)
+        # record_file_container_layout.addWidget(get_record_file_button)
+        # self.record_file_label = QLabel(f"Record file: {self.record_file if self.record_file else '(not selected)'}")
+        # record_file_container_layout.addWidget(self.record_file_label)
+        # record_file_container_layout.setAlignment(Qt.AlignCenter)
+        # record_file_container.setLayout(record_file_container_layout)
+        #
+        # benchmark_container_layout.addWidget(record_file_container)
 
         rb_button_widget = QWidget()
         rb_button_layout = QHBoxLayout()
@@ -167,17 +167,17 @@ class MainWindow(QMainWindow):
             self.last_directory = os.path.dirname(file_dir)
             self.detected_fd_label.setText(f"Detected FD(s): {' '.join(self.search_for_fd(file_dir))}")
 
-    def on_get_record_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select file", self.last_directory, "Python files (*.py)")
-        if file_path:
-            self.record_file = file_path
-            self.record_file_label.setText(f"Record file: {file_path}")
+    # def on_get_record_file(self):
+    #     file_path, _ = QFileDialog.getOpenFileName(self, "Select file", self.last_directory, "Python files (*.py)")
+    #     if file_path:
+    #         self.record_file = file_path
+    #         self.record_file_label.setText(f"Record file: {file_path}")
 
     def toggle_benchmark_window(self):
         if self.benchmark_window and self.benchmark_window.isVisible():
             self.msg_dialog.display_error("You can at most open one benchmark window at a time!")
             return
-        if (not self.traces_dir) or (not self.extension_dir) or (not self.record_file):
+        if (not self.traces_dir) or (not self.extension_dir):  # or (not self.record_file)
             self.msg_dialog.display_error("Please select all traces folder, Extension folder and Record file first!")
             return
         self.benchmark_window = BenchmarkWindow(parent=self)
@@ -423,7 +423,7 @@ class WorkerThread(QThread):
         self.proc = subprocess.Popen(["python", "run_benchmark.py",
                                       "-t", self.parent.parent.traces_dir,
                                       "-E", self.parent.parent.extension_dir,
-                                      "-R", self.parent.parent.record_file],
+                                      ],  # "-R", self.parent.parent.record_file
                                      stdout=subprocess.PIPE)
         stdout, stderr = self.proc.communicate()
         if self.proc.returncode == 0:
