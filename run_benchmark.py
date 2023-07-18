@@ -3,9 +3,7 @@ import glob
 import os
 import sys
 import pickle
-import time
-import pandas as pd
-from run import translate, run, run_all
+from run import run_all
 
 
 def main():
@@ -13,7 +11,7 @@ def main():
     # Input:
     traces_dir = args.t  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\data"
     extension_dir = args.E  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension"
-    record_file = args.R  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension\record.py"
+    # record_file = args.R  # "C:\Users\Administrator\PycharmProjects\Benchmark_Platform_for_Failure_Detector\Extension\record.py"
     processes = args.p  #default is 32
 
     file = glob.glob(os.path.join(extension_dir, "*.txt"))
@@ -23,9 +21,10 @@ def main():
         sp1 = base_name.split('.')[0]
         sp2 = sp1.split('_')
         if len(sp2) == 1:
-            record[sp1] = "record"
+            class_name = "record"
         else:
-            record[sp1] = sp2[1]
+            class_name = sp2[1]
+        record[sp1] = class_name
 
     data = {}
     for language, structure in record.items():
@@ -48,7 +47,7 @@ if __name__ == '__main__':
     cwd = os.getcwd()
     parser.add_argument("-t", default=os.path.join(cwd, "data"), help="Directory to traces folder")
     parser.add_argument("-E", default=os.path.join(cwd, "Extension"), help="Directory to Extension folder")
-    parser.add_argument("-R", default=os.path.join(cwd, "Extension\\record.py"), help="Path to Record file")
+    # parser.add_argument("-R", default=os.path.join(cwd, "Extension\\record.py"), help="Path to Record file")
     parser.add_argument("-p", default=32, help="Number of processes used to do benchmark")
     args = parser.parse_args()
     main()
