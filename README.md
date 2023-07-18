@@ -45,15 +45,19 @@ Hardware:
 `ui.py`: main entry to GUI component, must be in the same working directory as `run_benchmark.py`, see more details in 
 [GUI Explanations](#gui-explanations).
 
-`runbenchmark.py`: spawns an internal process that runs benchmark for the GUI, must be in the same working directory 
+`run_benchmark.py`: spawns an internal process that runs benchmark for the GUI, must be in the same working directory 
 as `ui.py`, see more details in [GUI Explanations](#gui-explanations).
 
 ## GUI Explanations
-User must specify three parameters for the benchmark to run: _**directory of trace files**_, 
-_**directory of Extension files (language files and Record class file)**_, and _**number of processes**_, unless they already exist in
-the current working directory and automatically detected by the software;    
+To run GUI, use the command: `python ui.py [PyQt arguments]`. 
 
-The three parameters will then be passed into `run_benchmark.py` as command line options `-t`, `-E` and `-p` respectively,
+
+User must specify two parameters in the GUI for the benchmark to run: _**directory of trace files**_ and
+_**directory of Extension files (language files and Record class file)**_, unless they already exist in
+the current working directory and automatically detected by the software. If user wants to run `run_benchmark.py` separately, 
+then the parameter _**number of processes**_ can be optionally specified, which is fixed to 32 in the GUI. 
+
+The three parameters (if specified) will then be passed into `run_benchmark.py` as command line options `-t`, `-E` and `-p` respectively,
 and benchmark data will be produced by running this program as an internal process;
 
 In our project, the first two parameters are named `.data`, `.Extension` respectively. For the parameter number of processes, 
