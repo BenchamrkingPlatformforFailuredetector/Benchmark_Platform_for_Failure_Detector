@@ -50,25 +50,23 @@ as `ui.py`, see more details in [GUI Explanations](#gui-explanations).
 
 ## GUI Explanations
 User must specify three parameters for the benchmark to run: _**directory of trace files**_, 
-_**directory of Extension files (language files)**_, and _**path to Record class file**_, unless they already exist in
+_**directory of Extension files (language files and Record class file)**_, and _**number of processes**_, unless they already exist in
 the current working directory and automatically detected by the software;    
 
-The three parameters will then be passed into `run_benchmark.py` as command line options `-t`, `-E` and `-R` respectively,
+The three parameters will then be passed into `run_benchmark.py` as command line options `-t`, `-E` and `-p` respectively,
 and benchmark data will be produced by running this program as an internal process;
 
-In our project, the three parameters are named `.data`, `.Extension` and `.Extension\record.py`
-(`.Extension\newrecord.py`) respectively. 
+In our project, the first two parameters are named `.data`, `.Extension` respectively. For the parameter number of processes, 
+its default value is 32. 
 
 We provide traces from PlanetLab in `.data` by default. Users are free to use their own trace files. However, 
 the structure and format of the files MUST comply to `.data`;
 
-We provide three failure detector language files (`.Extension\accural.txt`, `.Extension\bertier.txt`, 
-`.Extension\chen.txt`) by default. Users are encouraged to add more failure detectors. However, user MUST ensure that 
-every `.txt` file in _**directory of Extension files (language files)**_ is a language file; 
+We provide three failure detector language files (`.Extension\accural_newrecord.txt`, `.Extension\bertier.txt`, 
+`.Extension\chen.txt`) by default, and two Record class files (`.Extension\record.py`, `.Extension\newrecord.py`). Users are encouraged to add more failure detectors and corresponding Record class file. If the users add a new Record class file, they _**have to**_ include this new Record class in the language txt file which requires this Record. (For example, the accural algorithm is named as `accural_newrecord.txt` is because it requires the Record class file `newrecord.py` to work). Morevoer, user MUST ensure that every `.txt` file in _**directory of Extension files**_ is a language file and every `.py` file in _**directory of Extension files**_ is a Record class file. 
 
-We provide two Record class files (`.Extension\record.py`, `.Extension\newrecord.py`) by default. Users are free to 
-create their own Record classes. However, the classes MUST implement `AbstractRecord` class in `.Extension\_record.py`
-, and it is recommended that the file is named `record.py` under _**directory of Extension files (language files)**_;
+We allow the users to run this benchmark platform in multiple processes to reduce the running time. The default value of the number of processes is 32. 
+If there is any error related to the memory overflow when using the platform, it is a good choice to try to reduce the number of processes.
 
 We DO NOT provide a way to add metrics in the GUI since it involves the modification of `run_benchmark.py`. We STRONGLY 
 DISCOURAGE user to do so, and take no responsibility for any consequences.
